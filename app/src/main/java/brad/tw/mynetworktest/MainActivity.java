@@ -11,6 +11,7 @@ import android.widget.EditText;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.Socket;
 
 public class MainActivity extends AppCompatActivity {
     private EditText input;
@@ -53,6 +54,21 @@ public class MainActivity extends AppCompatActivity {
             Log.v("brad", ee.toString());
         }
         handler.sendEmptyMessage(0);
+    }
+
+    public void tcpSend(View v){
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    Socket socket = new Socket(
+                            InetAddress.getByName("10.0.3.2"), 9999);
+                    socket.close();
+                }catch (Exception ee){
+                    Log.v("brad", ee.toString());
+                }
+            }
+        }.start();
     }
 
     private class UIHandler extends Handler {
