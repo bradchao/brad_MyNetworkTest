@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -60,9 +61,15 @@ public class MainActivity extends AppCompatActivity {
         new Thread(){
             @Override
             public void run() {
+                byte[] buf = input.getText().toString().getBytes();
                 try {
                     Socket socket = new Socket(
                             InetAddress.getByName("10.0.3.2"), 9999);
+                    OutputStream out = socket.getOutputStream();
+                    out.write(buf);
+                    out.flush();
+                    out.close();
+
                     socket.close();
                 }catch (Exception ee){
                     Log.v("brad", ee.toString());
