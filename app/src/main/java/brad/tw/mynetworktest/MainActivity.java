@@ -18,6 +18,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -213,7 +217,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void http4(View v){
-        pDialog.show();
         new Thread(){
             @Override
             public void run() {
@@ -236,11 +239,31 @@ public class MainActivity extends AppCompatActivity {
                                     conn.getInputStream()));
             String strJSON = reader.readLine();
             Log.v("brad", "len:" + strJSON.length() + ":" + strJSON);
-
+            parseJSON(strJSON);
 
 
         } catch (Exception e) {
         }
+    }
+
+    private void parseJSON(String json){
+        try {
+            JSONArray root = new JSONArray(json);
+            for (int i=0; i<root.length(); i++){
+                JSONObject item = root.getJSONObject(i);
+                String name = item.getString("Name");
+                String addr = item.getString("Address");
+                String tel = item.getString("Tel");
+                Log.v("brad", name + ":" + addr + ":" + tel);
+            }
+
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     private class UIHandler extends Handler {
