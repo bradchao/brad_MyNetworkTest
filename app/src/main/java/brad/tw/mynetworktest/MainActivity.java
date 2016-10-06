@@ -1,9 +1,14 @@
 package brad.tw.mynetworktest;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +17,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.DatagramPacket;
@@ -27,11 +35,24 @@ public class MainActivity extends AppCompatActivity {
     private UIHandler handler;
     private ImageView img;
     private Bitmap bmpImage;
+    private File sdroot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    },
+                    1);
+        }
+
+        sdroot = Environment.getExternalStorageDirectory();
 
         img = (ImageView)findViewById(R.id.img);
 
@@ -146,7 +167,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void http3(View v){
+        new Thread(){
+            @Override
+            public void run() {
+                doHttp3();
+            }
+        }.start();
+    }
 
+    private void doHttp3(){
+
+        try {
+            URL url =
+                    new URL("http://pdfmyurl.com/?url=" +
+                            "http://www.gamer.com.tw");
+            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+            conn.connect();
+            InputStream in = conn.getInputStream();
+
+            FileOutputStream fout =
+                    new FileOutputStream(new File(sdroot,"brad.pdf"));
+            byte[] buf = new byte[4096]; int len;
+            while ( (len = in.read(buf, 0, buf.length)) != -1){
+                fout.write(buf, 0, len);
+            }
+            fout.flush();
+            fout.close();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private class UIHandler extends Handler {
         @Override
