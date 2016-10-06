@@ -212,6 +212,36 @@ public class MainActivity extends AppCompatActivity {
             handler.sendEmptyMessage(2);
         }
     }
+    public void http4(View v){
+        pDialog.show();
+        new Thread(){
+            @Override
+            public void run() {
+                doHttp4();
+            }
+        }.start();
+    }
+
+    private void doHttp4(){
+
+        try {
+            URL url =
+                    new URL("http://data.coa.gov.tw/Service/OpenData/EzgoTravelFoodStay.aspx");
+            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+            conn.connect();
+
+            BufferedReader reader =
+                    new BufferedReader(
+                            new InputStreamReader(
+                                    conn.getInputStream()));
+            String strJSON = reader.readLine();
+            Log.v("brad", "len:" + strJSON.length() + ":" + strJSON);
+
+
+
+        } catch (Exception e) {
+        }
+    }
 
     private class UIHandler extends Handler {
         @Override

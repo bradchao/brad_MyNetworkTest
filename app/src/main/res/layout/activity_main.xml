@@ -34,6 +34,11 @@
         android:layout_height="wrap_content"
         android:onClick="http3"
         android:text="HTTP3" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="http4"
+        android:text="HTTP4" />
 
     <TextView
         android:id="@+id/tv"
