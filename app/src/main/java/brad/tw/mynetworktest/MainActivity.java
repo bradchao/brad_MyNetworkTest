@@ -35,6 +35,7 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private EditText input;
@@ -136,7 +137,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void doHttp1(){
         try {
-            URL url = new URL("http://www.brad.tw/");
+//            URL url = new URL("http://www.brad.tw/");
+            URL url = new URL("http://10.0.3.2/");
             HttpURLConnection conn =  (HttpURLConnection)url.openConnection();
             conn.connect();
             BufferedReader reader =
@@ -240,6 +242,29 @@ public class MainActivity extends AppCompatActivity {
             String strJSON = reader.readLine();
             Log.v("brad", "len:" + strJSON.length() + ":" + strJSON);
             parseJSON(strJSON);
+
+
+        } catch (Exception e) {
+        }
+    }
+    public void http5(View v){
+        new Thread(){
+            @Override
+            public void run() {
+                doHttp5();
+            }
+        }.start();
+    }
+
+    private void doHttp5(){
+        try {
+            MultipartUtility mu =
+                    new MultipartUtility(
+                            "http://10.0.3.2/check.php","UTF-8");
+            mu.addFormField("account","brad");
+            mu.addFormField("passwd","123456");
+            List<String> ret = mu.finish();
+            Log.v("brad", ret.get(0));
 
 
         } catch (Exception e) {
