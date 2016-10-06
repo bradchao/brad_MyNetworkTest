@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -71,6 +72,15 @@ public class MainActivity extends AppCompatActivity {
         pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         pDialog.setMessage("Downloading.....");
 
+        try {
+            FileOutputStream fout = new FileOutputStream(
+                    new File(sdroot, "brad.txt"));
+            fout.write("Hello, Brad".getBytes());
+            fout.flush();
+            fout.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
@@ -258,16 +268,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void doHttp5(){
         try {
+//            MultipartUtility mu =
+//                    new MultipartUtility(
+//                            "http://10.0.3.2/check.php","UTF-8");
+//            mu.addFormField("account","brad");
+//            mu.addFormField("passwd","123456");
+//            List<String> ret = mu.finish();
+//            Log.v("brad", ret.get(0));
+
             MultipartUtility mu =
                     new MultipartUtility(
-                            "http://10.0.3.2/check.php","UTF-8");
-            mu.addFormField("account","brad");
-            mu.addFormField("passwd","123456");
+                            "http://10.0.3.2/upload.php","UTF-8");
+            mu.addFilePart("upload",new File(sdroot, "brad.txt"));
             List<String> ret = mu.finish();
             Log.v("brad", ret.get(0));
 
 
+
         } catch (Exception e) {
+            Log.v("brad", e.toString());
         }
     }
 
