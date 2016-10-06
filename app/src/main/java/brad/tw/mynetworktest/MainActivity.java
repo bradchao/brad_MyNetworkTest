@@ -1,6 +1,7 @@
 package brad.tw.mynetworktest;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView img;
     private Bitmap bmpImage;
     private File sdroot;
+    private ProgressDialog pDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,13 @@ public class MainActivity extends AppCompatActivity {
 
         handler = new UIHandler();
         input = (EditText)findViewById(R.id.inputData);
+
+        pDialog = new ProgressDialog(this);
+        pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pDialog.setMessage("Downloading.....");
+
+
+
     }
 
     public void udpSend(View v){
@@ -168,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void http3(View v){
+        pDialog.show();
         new Thread(){
             @Override
             public void run() {
@@ -194,10 +205,11 @@ public class MainActivity extends AppCompatActivity {
             }
             fout.flush();
             fout.close();
-
-
+            Log.v("brad", "Download OK");
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v("brad", "Download Fail");
+        } finally {
+            handler.sendEmptyMessage(2);
         }
     }
 
@@ -211,6 +223,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 1:
                     img.setImageBitmap(bmpImage);
+                    break;
+                case 2:
+                    pDialog.dismiss();
                     break;
             }
         }
