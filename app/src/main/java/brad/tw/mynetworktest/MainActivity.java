@@ -8,11 +8,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
     private EditText input;
@@ -77,6 +82,38 @@ public class MainActivity extends AppCompatActivity {
             }
         }.start();
     }
+
+    public void http1(View v){
+        new Thread(){
+            @Override
+            public void run() {
+                doHttp1();
+            }
+        }.start();
+    }
+
+    private void doHttp1(){
+        try {
+            URL url = new URL("http://www.tcca.org.tw/");
+            HttpURLConnection conn =  (HttpURLConnection)url.openConnection();
+            conn.connect();
+            BufferedReader reader =
+                    new BufferedReader(
+                            new InputStreamReader(
+                                    conn.getInputStream()));
+            String line;
+            while ( (line = reader.readLine()) != null){
+                Log.v("brad", line);
+            }
+            reader.close();
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private class UIHandler extends Handler {
         @Override
